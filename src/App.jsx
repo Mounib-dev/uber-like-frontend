@@ -6,6 +6,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Navbar from "./components/layout/Navbar";  
 import Footer from "./components/layout/Footer";  
+import PlaceOrderForm from "./components/orders/PlaceOrderForm";
+import Menu from "./components/client/Menu";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
             <Route path="/" element={<Home />} />
              <Route path="/login" element={<Login />} /> 
              <Route path="/register" element={<Register />} /> 
+             <Route path="/order" element={<PlaceOrderForm />} /> 
+             <Route path="/menu" element={<Menu />} /> 
             {/* <Route element={<PrivateRoute />}></Route> */}
           </Routes>
         </main>

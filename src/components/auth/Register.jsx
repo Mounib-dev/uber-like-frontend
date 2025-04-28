@@ -23,15 +23,16 @@ export default function Register() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-tr via-pink-10">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
-        <h2 className="mb-6 text-3xl font-bold text-center text-black-600">Créer un compte</h2>
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="w-full max-w-md rounded-2xl bg-gray-100 p-10 shadow-2xl">
+        <h2 className="mb-8 text-4xl font-extrabold text-center text-neutral-900">Créer un compte</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-black-700">Email</label>
+            <label className="block text-sm font-semibold text-neutral-700 mb-1">Email</label>
             <input
               type="email"
-              className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-black-500 focus:ring-black-500"
+              className="w-full rounded-lg border border-gray-300 bg-white p-4 text-neutral-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+              placeholder="ex: utilisateur@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -39,10 +40,11 @@ export default function Register() {
           </div>
 
           <div className="relative">
-            <label className="block text-sm font-medium text-black-700">Mot de passe</label>
+            <label className="block text-sm font-semibold text-neutral-700 mb-1">Mot de passe</label>
             <input
               type={showPassword ? "text" : "password"}
-              className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-black-500 focus:ring-black-500 pr-10"
+              className="w-full rounded-lg border border-gray-300 bg-white p-4 text-neutral-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black pr-10"
+              placeholder="Votre mot de passe"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -50,10 +52,11 @@ export default function Register() {
           </div>
 
           <div className="relative">
-            <label className="block text-sm font-medium text-black-700">Confirmer le mot de passe</label>
+            <label className="block text-sm font-semibold text-neutral-700 mb-1">Confirmer le mot de passe</label>
             <input
               type={showPassword ? "text" : "password"}
-              className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-black-500 focus:ring-black-500 pr-10"
+              className="w-full rounded-lg border border-gray-300 bg-white p-4 text-neutral-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black pr-10"
+              placeholder="Confirmez votre mot de passe"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
@@ -61,9 +64,9 @@ export default function Register() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-9 text-black-500"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black"
             >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
             </button>
           </div>
 
@@ -71,14 +74,14 @@ export default function Register() {
 
           <button
             type="submit"
-            className="w-full rounded-md bg-pink-600 px-4 py-2 text-white hover:bg-pink-700"
+            className="w-full rounded-lg bg-black text-white font-bold p-4 hover:bg-neutral-800 transition"
           >
             S'inscrire
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm">
-          <a href="/login" className="text-black-500 hover:underline">Déjà inscrit ? Se connecter</a>
+        <div className="mt-8 text-center text-sm text-gray-500">
+          <a href="/login" className="hover:text-black transition">Déjà inscrit ? Se connecter</a>
         </div>
       </div>
     </div>
