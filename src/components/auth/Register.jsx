@@ -10,6 +10,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const phoneRegex = /^0[1-9](\s\d{2}){4}$/;
 
@@ -23,18 +24,21 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/gateway/client-service/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          address,
-          phoneNumber,
-          email,
-          password,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:3000/gateway/client-service/user/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            address,
+            phoneNumber,
+            email,
+            password,
+          }),
+        },
+      );
 
       const data = await response.json();
 
@@ -42,20 +46,31 @@ export default function Register() {
         throw new Error(data.message || "Erreur lors de l'inscription.");
       }
 
-      console.log("Inscription réussie !");
-      
+      // setSuccessMessage(data.message)
+      setSuccessMessage(data.message);
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setAddress("");
+      setPhoneNumber("");
+      setPassword("");
     } catch (error) {
-      setError(error.message);
+      console.error(error);
+      setError("Erreur lors de l'inscription.");
     }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="w-full max-w-md rounded-2xl bg-gray-100 p-10 shadow-2xl">
-        <h2 className="mb-8 text-4xl font-extrabold text-center text-neutral-900">Créer un compte</h2>
+        <h2 className="mb-8 text-center text-4xl font-extrabold text-neutral-900">
+          Créer un compte
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-1">Prénom</label>
+            <label className="mb-1 block text-sm font-semibold text-neutral-700">
+              Prénom
+            </label>
             <input
               type="text"
               className="w-full rounded-lg border bg-white p-4"
@@ -67,7 +82,9 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-1">Nom</label>
+            <label className="mb-1 block text-sm font-semibold text-neutral-700">
+              Nom
+            </label>
             <input
               type="text"
               className="w-full rounded-lg border bg-white p-4"
@@ -79,7 +96,9 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-1">Email</label>
+            <label className="mb-1 block text-sm font-semibold text-neutral-700">
+              Email
+            </label>
             <input
               type="email"
               className="w-full rounded-lg border bg-white p-4"
@@ -91,7 +110,9 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-1">Adresse</label>
+            <label className="mb-1 block text-sm font-semibold text-neutral-700">
+              Adresse
+            </label>
             <input
               type="text"
               className="w-full rounded-lg border bg-white p-4"
@@ -103,7 +124,9 @@ export default function Register() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-neutral-700 mb-1">Numéro de téléphone</label>
+            <label className="mb-1 block text-sm font-semibold text-neutral-700">
+              Numéro de téléphone
+            </label>
             <input
               type="text"
               className="w-full rounded-lg border bg-white p-4"
@@ -115,7 +138,9 @@ export default function Register() {
           </div>
 
           <div className="relative">
-            <label className="block text-sm font-semibold text-neutral-700 mb-1">Mot de passe</label>
+            <label className="mb-1 block text-sm font-semibold text-neutral-700">
+              Mot de passe
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               className="w-full rounded-lg border bg-white p-4 pr-10"
@@ -127,24 +152,31 @@ export default function Register() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black"
+              className="absolute top-1/2 right-4 -translate-y-1/2 transform text-gray-400 hover:text-black"
             >
               {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
             </button>
           </div>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
+          {successMessage && (
+            <p className="mt-4 text-sm font-semibold text-green-600">
+              {successMessage}
+            </p>
+          )}
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-black text-white font-bold p-4 hover:bg-neutral-800 transition"
+            className="w-full rounded-lg bg-black p-4 font-bold text-white transition hover:bg-neutral-800"
           >
             S'inscrire
           </button>
         </form>
 
         <div className="mt-8 text-center text-sm text-gray-500">
-          <a href="/login" className="hover:text-black transition">Déjà inscrit ? Se connecter</a>
+          <a href="/login" className="transition hover:text-black">
+            Déjà inscrit ? Se connecter
+          </a>
         </div>
       </div>
     </div>
