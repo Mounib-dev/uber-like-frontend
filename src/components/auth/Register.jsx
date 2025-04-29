@@ -3,20 +3,26 @@ import { Eye, EyeOff } from "lucide-react";
 
 export default function Register() {
   const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
+  const phoneRegex = /^0[9](\s\d{2}){4}$/;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.");
+
+    if (!phoneRegex.test(phone)) {
+      setError("Le numéro de téléphone doit être au format : 00 00 00 00 00");
       return;
     }
+
     try {
       console.log("Enregistrement réussi !");
+
     } catch (error) {
       setError("Erreur lors de l'inscription.");
     }
@@ -39,6 +45,30 @@ export default function Register() {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-1">Adresse</label>
+            <input
+              type="text"
+              className="w-full rounded-lg border border-gray-300 bg-white p-4 text-neutral-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+              placeholder="Votre adresse"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-1">Numéro de téléphone</label>
+            <input
+              type="text"
+              className="w-full rounded-lg border border-gray-300 bg-white p-4 text-neutral-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+              placeholder="ex: 00 00 00 00 00"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+            />
+          </div>
+
           <div className="relative">
             <label className="block text-sm font-semibold text-neutral-700 mb-1">Mot de passe</label>
             <input
@@ -47,18 +77,6 @@ export default function Register() {
               placeholder="Votre mot de passe"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="relative">
-            <label className="block text-sm font-semibold text-neutral-700 mb-1">Confirmer le mot de passe</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              className="w-full rounded-lg border border-gray-300 bg-white p-4 text-neutral-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black pr-10"
-              placeholder="Confirmez votre mot de passe"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
             <button
