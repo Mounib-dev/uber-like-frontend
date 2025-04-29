@@ -6,8 +6,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Navbar from "./components/layout/Navbar";  
 import Footer from "./components/layout/Footer";  
-import PlaceOrderForm from "./components/orders/PlaceOrderForm";
-import Menu from "./components/client/Menu";
+import PlaceOrderForm from "./components/orders/PlaceOrder";
+import Menu from "./components/restaurants/Menu";
+import RestaurantList from "./components/restaurants/RestaurantsList";
+import Panier from "./components/orders/Panier";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
              <Route path="/register" element={<Register />} /> 
              <Route path="/order" element={<PlaceOrderForm />} /> 
              <Route path="/menu" element={<Menu />} /> 
+             <Route path="/restaurants" element={<RestaurantList />} /> 
+             <Route path="/panier" element={<Panier />} /> 
             {/* <Route element={<PrivateRoute />}></Route> */}
           </Routes>
         </main>
