@@ -1,28 +1,64 @@
 import { Link } from "react-router-dom";
-import { ShoppingCart } from "lucide-react"; 
+import { ShoppingCart } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { LogOut } from "lucide-react";
 
 export default function Navbar() {
+  const { isLoggedIn, logout, userRole } = useAuth();
+  console.log(userRole);
   return (
-    <nav className="bg-white shadow-md p-4 flex justify-between items-center">
+    <nav className="flex items-center justify-between bg-white p-4 shadow-md">
       <div className="text-2xl font-bold text-gray-800">UberEatCopy</div>
       <div className="flex items-center space-x-6">
-        <Link to="/restaurants" className="text-gray-600 hover:text-green-500">
-          Restaurants
-        </Link>
-        <Link to="/order" className="text-gray-600 hover:text-green-500">
-          Commandes
-        </Link>
-        <Link to="/livraison" className="text-gray-600 hover:text-green-500">
-          Livraison
-        </Link>
-        <Link to="/login" className="text-gray-600 hover:text-green-500">
-          Connexion
-        </Link>
-        <Link to="/panier" className="relative text-gray-600 hover:text-green-500">
-          <ShoppingCart size={24} />
-          
-           <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span> 
-        </Link>
+        {isLoggedIn && (
+          <>
+            {userRole === "client" && (
+              <Link
+                to="/restaurants"
+                className="text-gray-600 hover:text-green-500"
+              >
+                Restaurants
+              </Link>
+            )}
+
+            {(userRole === "client" || userRole === "chef") && (
+              <Link to="/order" className="text-gray-600 hover:text-green-500">
+                Commandes
+              </Link>
+            )}
+
+            {userRole === "livreur" && (
+              <Link
+                to="/livraison"
+                className="text-gray-600 hover:text-green-500"
+              >
+                Livraison
+              </Link>
+            )}
+
+            <LogOut
+              onClick={logout}
+              className="text-gray-600 hover:text-green-500"
+            />
+
+            <Link
+              to="/panier"
+              className="relative text-gray-600 hover:text-green-500"
+            >
+              <ShoppingCart size={24} />
+
+              <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-xs text-white">
+                0
+              </span>
+            </Link>
+          </>
+        )}
+
+        {!isLoggedIn && (
+          <Link to="/login" className="text-gray-600 hover:text-green-500">
+            Connexion
+          </Link>
+        )}
       </div>
     </nav>
   );
