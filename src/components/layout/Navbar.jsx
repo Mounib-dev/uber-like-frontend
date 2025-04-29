@@ -3,7 +3,7 @@ import { ShoppingCart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { LogOut } from "lucide-react";
 
-export default function Navbar() {
+export default function Navbar({panier}) {
   const { isLoggedIn, logout, userRole } = useAuth();
   console.log(userRole);
   return (
@@ -41,16 +41,17 @@ export default function Navbar() {
               className="text-gray-600 hover:text-green-500"
             />
 
-            <Link
-              to="/panier"
-              className="relative text-gray-600 hover:text-green-500"
-            >
-              <ShoppingCart size={24} />
-
-              <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-xs text-white">
-                0
-              </span>
-            </Link>
+          <Link
+          to="/panier"
+          className="relative text-gray-600 hover:text-green-500"
+        >
+          <ShoppingCart size={24} />
+          {panier.length > 0 && (
+            <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-xs text-white animate-ping-fast">
+              {panier.length}
+            </span>
+          )}
+        </Link>
           </>
         )}
 
