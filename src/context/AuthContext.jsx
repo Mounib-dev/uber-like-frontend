@@ -107,7 +107,13 @@ const AuthProvider = ({ children }) => {
         localStorage.setItem("userRole", userRole);
         setUserId(userId);
         setUserRole(userRole);
-        navigate("/restaurants");
+        if (userRole === "client") {
+          navigate("/restaurants");
+        } else if (userRole === "chef") {
+          navigate("/commandes");
+        } else {
+          navigate("/livraisons");
+        }
       } else {
         throw new Error(response.data.message || "Login failed");
       }
