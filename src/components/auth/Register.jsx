@@ -2,23 +2,50 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function Register() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
+  const phoneRegex = /^0[1-9](\s\d{2}){4}$/;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (password !== confirmPassword) {
-      setError("Les mots de passe ne correspondent pas.");
+
+    if (!phoneRegex.test(phoneNumber)) {
+      setError("Le numéro de téléphone doit être au format : 06 00 00 00 00");
       return;
     }
+
     try {
-      console.log("Enregistrement réussi !");
+      const response = await fetch("http://localhost:3000/gateway/client-service/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          address,
+          phoneNumber,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Erreur lors de l'inscription.");
+      }
+
+      console.log("Inscription réussie !");
+      
     } catch (error) {
-      setError("Erreur lors de l'inscription.");
+      setError(error.message);
     }
   };
 
@@ -28,13 +55,61 @@ export default function Register() {
         <h2 className="mb-8 text-4xl font-extrabold text-center text-neutral-900">Créer un compte</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-1">Prénom</label>
+            <input
+              type="text"
+              className="w-full rounded-lg border bg-white p-4"
+              placeholder="prenom"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-1">Nom</label>
+            <input
+              type="text"
+              className="w-full rounded-lg border bg-white p-4"
+              placeholder="nom"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
             <label className="block text-sm font-semibold text-neutral-700 mb-1">Email</label>
             <input
               type="email"
-              className="w-full rounded-lg border border-gray-300 bg-white p-4 text-neutral-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black"
-              placeholder="ex: utilisateur@email.com"
+              className="w-full rounded-lg border bg-white p-4"
+              placeholder="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-1">Adresse</label>
+            <input
+              type="text"
+              className="w-full rounded-lg border bg-white p-4"
+              placeholder="Votre adresse"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-neutral-700 mb-1">Numéro de téléphone</label>
+            <input
+              type="text"
+              className="w-full rounded-lg border bg-white p-4"
+              placeholder="ex: 06 00 00 00 00"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               required
             />
           </div>
@@ -43,22 +118,10 @@ export default function Register() {
             <label className="block text-sm font-semibold text-neutral-700 mb-1">Mot de passe</label>
             <input
               type={showPassword ? "text" : "password"}
-              className="w-full rounded-lg border border-gray-300 bg-white p-4 text-neutral-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black pr-10"
+              className="w-full rounded-lg border bg-white p-4 pr-10"
               placeholder="Votre mot de passe"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="relative">
-            <label className="block text-sm font-semibold text-neutral-700 mb-1">Confirmer le mot de passe</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              className="w-full rounded-lg border border-gray-300 bg-white p-4 text-neutral-900 placeholder-gray-400 focus:border-black focus:ring-1 focus:ring-black pr-10"
-              placeholder="Confirmez votre mot de passe"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
             <button

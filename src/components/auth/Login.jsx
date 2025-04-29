@@ -10,13 +10,29 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+  
     try {
-      //await login({ email, password });
+      const response = await fetch("http://localhost:3000/gateway/client-service/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Échec de la connexion.");
+      }
+  
+      console.log("Connexion réussie !");
+  
     } catch (error) {
-      setError("Échec de la connexion. Vérifiez vos identifiants.");
+      setError(error.message);
     }
   };
-
+  
   return (
     <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="w-full max-w-md rounded-2xl bg-gray-100 p-10 shadow-2xl">
