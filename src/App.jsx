@@ -16,9 +16,16 @@ import PrivateRoute from "./components/auth/Private";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
-  const [panier, setPanier] = useState([]); 
+  const [panier, setPanier] = useState([]);
+const [commandes, setCommandes] = useState([]);
 
-  return (
+<Panier
+  panier={panier}
+  setPanier={setPanier}
+  commandes={commandes}
+  setCommandes={setCommandes}
+/>
+ return (
     <Router>
       <div className="flex min-h-screen flex-col">
         <AuthProvider>
@@ -33,7 +40,18 @@ function App() {
               <Route element={<PrivateRoute />}>
                 <Route path="/order" element={<PlaceOrderForm />} />
                 <Route path="/restaurant/:id" element={<RestaurantMenu setPanier={setPanier} />} />
-                <Route path="/panier" element={<Panier panier={panier} />} />
+                <Route
+                      path="/panier"
+                      element={
+                        <Panier
+                          panier={panier}
+                          setPanier={setPanier}
+                          commandes={commandes}
+                          setCommandes={setCommandes}
+                        />
+                      }
+                    />
+
                 <Route path="/restaurants" element={<RestaurantList />} />
               </Route>
             </Routes>

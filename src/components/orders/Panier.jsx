@@ -1,6 +1,35 @@
 import { useState } from "react";
+import { useEffect } from "react";
 
 export default function Panier({ panier, setPanier, commandes, setCommandes }) {
+  useEffect(() => {
+    const savedPanier = localStorage.getItem("panier");
+    const savedCommandes = localStorage.getItem("commandes");
+  
+    try {
+      if (savedPanier && savedPanier !== "undefined") {
+        setPanier(JSON.parse(savedPanier));
+      }
+    } catch (e) {
+      console.error("Erreur lors du parsing du panier :", e);
+    }
+  
+    try {
+      if (savedCommandes && savedCommandes !== "undefined") {
+        setCommandes(JSON.parse(savedCommandes));
+      }
+    } catch (e) {
+      console.error("Erreur lors du parsing des commandes :", e);
+    }
+  }, [setCommandes, setPanier]);
+  
+  useEffect(() => {
+    localStorage.setItem("panier", JSON.stringify(panier));
+  }, [panier]);
+  
+  useEffect(() => {
+    localStorage.setItem("commandes", JSON.stringify(commandes));
+  }, [commandes]);
   const [showHistorique, setShowHistorique] = useState(false);
 
   const augmenterQuantite = (index) => {
@@ -66,12 +95,11 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
                     +
                   </button>
                 </div>
-                <button
-                  onClick={() => supprimerProduit(index)}
-                  className="text-red-600 font-bold ml-4"
-                >
-                  ✕
-                </button>
+                <button onClick={() => supprimerProduit(index)} className="text-red-600 text-xl ml-4">
+                    🗑️
+              </button>
+
+
               </div>
             ))}
           </div>
@@ -92,12 +120,13 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
       )}
 
       <div className="mt-10">
-        <button
-          onClick={() => setShowHistorique(!showHistorique)}
-          className="text-blue-600 underline"
-        >
-          {showHistorique ? "Masquer l'historique" : "Voir l'historique des commandes"}
-        </button>
+      <button
+  onClick={() => setShowHistorique(!showHistorique)}
+  className="mt-6 bg-gray-100 hover:bg-gray-200 text-black px-4 py-2 rounded-lg font-semibold shadow"
+>
+  {showHistorique ? "Masquer l'historique des commandes" : "Voir l'historique des commandes"}
+</button>
+
       </div>
 
       {showHistorique && commandes.length > 0 && (
