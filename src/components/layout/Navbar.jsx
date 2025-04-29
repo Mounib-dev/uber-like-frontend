@@ -18,8 +18,6 @@ export default function Navbar() {
         <Link to="/login" className="text-gray-600 hover:text-green-500">
           Connexion
         </Link>
-
-       
         <Link to="/panier" className="relative text-gray-600 hover:text-green-500">
           <ShoppingCart size={24} />
           
