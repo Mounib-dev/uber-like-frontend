@@ -1,33 +1,45 @@
-import Menu from "./Menu";
+import { Link } from "react-router-dom";
 
 export default function RestaurantList() {
   const restaurants = [
     {
       id: 1,
       name: "La Bella Italia",
-      menu: [
-        { id: 1, name: "Pizza Margherita", description: "Tomate, mozzarella, basilic frais", price: 10 },
-        { id: 2, name: "Pâtes Carbonara", description: "Lardons fumés, crème légère, parmesan", price: 11 },
-      ],
+      description: "Cuisine italienne authentique",
+      image: "https://nice.love-spots.com/wp-content/uploads/sites/2/2019/12/Gepetto_restaurant-italien-Nice_Love-Spots_01-1024x768.jpg", 
     },
     {
       id: 2,
       name: "Le Gourmet Burger",
-      menu: [
-        { id: 3, name: "Burger Gourmet", description: "Boeuf 100%, cheddar affiné, sauce maison", price: 12 },
-        { id: 4, name: "Tacos épicé", description: "Poulet mariné, légumes frais, sauce piquante", price: 8 },
-      ],
+      description: "Burgers gourmets faits maison",
+      image: "https://media-cdn.tripadvisor.com/media/photo-m/1280/2c/f6/37/79/restaurant-front.jpg",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <h1 className="text-4xl font-bold text-center mb-10">Nos Restaurants</h1>
-      <div className="space-y-12 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-white text-gray-900 px-4 py-12">
+      <h1 className="text-4xl font-bold text-center mb-12">Restaurants Partenaires</h1>
+      <div className="grid gap-8 md:grid-cols-2 max-w-6xl mx-auto">
         {restaurants.map((restaurant) => (
-          <div key={restaurant.id}>
-            <h2 className="text-3xl font-semibold mb-6 border-b pb-2">{restaurant.name}</h2>
-            <Menu items={restaurant.menu} />
+          <div
+            key={restaurant.id}
+            className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+          >
+            <img
+              src={restaurant.image}
+              alt={restaurant.name}
+              className="w-full h-56 object-cover"
+            />
+            <div className="p-6">
+              <h2 className="text-2xl font-semibold mb-1">{restaurant.name}</h2>
+              <p className="text-gray-600 mb-4">{restaurant.description}</p>
+              <Link
+                to={`/restaurant/${restaurant.id}`}
+                className="inline-block bg-black text-white px-5 py-2 rounded-lg font-medium hover:bg-gray-800 transition"
+              >
+                Voir le menu
+              </Link>
+            </div>
           </div>
         ))}
       </div>
