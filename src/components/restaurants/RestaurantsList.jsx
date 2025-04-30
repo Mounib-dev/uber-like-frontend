@@ -14,6 +14,30 @@ export default function RestaurantList() {
       description: "Burgers gourmets faits maison",
       image: "https://media-cdn.tripadvisor.com/media/photo-m/1280/2c/f6/37/79/restaurant-front.jpg",
     },
+    {
+      id: 3,
+      name: "La Bella Italia",
+      description: "Cuisine italienne authentique",
+      image: "https://nice.love-spots.com/wp-content/uploads/sites/2/2019/12/Gepetto_restaurant-italien-Nice_Love-Spots_01-1024x768.jpg", 
+    },
+    {
+      id: 4,
+      name: "Le Gourmet Burger",
+      description: "Burgers gourmets faits maison",
+      image: "https://media-cdn.tripadvisor.com/media/photo-m/1280/2c/f6/37/79/restaurant-front.jpg",
+    },
+    {
+      id: 5,
+      name: "La Bella Italia",
+      description: "Cuisine italienne authentique",
+      image: "https://nice.love-spots.com/wp-content/uploads/sites/2/2019/12/Gepetto_restaurant-italien-Nice_Love-Spots_01-1024x768.jpg", 
+    },
+    {
+      id: 6,
+      name: "Le Gourmet Burger",
+      description: "Burgers gourmets faits maison",
+      image: "https://media-cdn.tripadvisor.com/media/photo-m/1280/2c/f6/37/79/restaurant-front.jpg",
+    },
   ];
 
   return (

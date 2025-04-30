@@ -6,7 +6,10 @@ import Register from "./components/auth/Register";
 import Home from "./components/Home";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
-import PlaceOrderForm from "./components/orders/PlaceOrder";
+
+
+import OrderList from "./components/orders/OrderList"
+
 
 import RestaurantList from "./components/restaurants/RestaurantsList";
 import RestaurantMenu from "./components/restaurants/RestaurantMenu";
@@ -38,8 +41,10 @@ const [commandes, setCommandes] = useState([]);
               <Route path="/register" element={<Register />} />
 
               <Route element={<PrivateRoute />}>
-                <Route path="/order" element={<PlaceOrderForm />} />
+                <Route path="/order"  />
                 <Route path="/restaurant/:id" element={<RestaurantMenu setPanier={setPanier} />} />
+                <Route path="/commandes" element={<OrderList   commandes={commandes}
+                          setCommandes={setCommandes} />} />
                 <Route
                       path="/panier"
                       element={

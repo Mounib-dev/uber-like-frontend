@@ -1,7 +1,13 @@
+import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
+import {useAuth} from '../../context/AuthContext'
+import { useNavigate } from "react-router-dom";
+
 
 export default function Panier({ panier, setPanier, commandes, setCommandes }) {
+  const navigate  = useNavigate()
+  const {userId }= useAuth ()
   useEffect(() => {
     const savedPanier = localStorage.getItem("panier");
     const savedCommandes = localStorage.getItem("commandes");
@@ -27,6 +33,8 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
     localStorage.setItem("panier", JSON.stringify(panier));
   }, [panier]);
   
+
+
   useEffect(() => {
     localStorage.setItem("commandes", JSON.stringify(commandes));
   }, [commandes]);
@@ -34,14 +42,14 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
 
   const augmenterQuantite = (index) => {
     const updated = [...panier];
-    updated[index].quantity++;
+    updated[index].quantite++;
     setPanier(updated);
   };
 
   const diminuerQuantite = (index) => {
     const updated = [...panier];
-    if (updated[index].quantity > 1) {
-      updated[index].quantity--;
+    if (updated[index].quantite > 1) {
+      updated[index].quantite--;
     } else {
       updated.splice(index, 1);
     }
@@ -54,14 +62,44 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
     setPanier(updated);
   };
 
-  const commander = () => {
-    if (panier.length > 0) {
-      setCommandes((prev) => [...prev, { items: panier, date: new Date() }]);
+  const commander = async () => {
+    if (panier.length === 0) return;
+  
+    const nouvelleCommande = {
+      items: panier,
+      date: new Date().toISOString(),
+    };
+  
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_GATEWAY}/commande-service/create`,
+        {
+          clientId: parseInt(userId),
+          plats: panier,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      console.log("Commande enregistrée avec succès :", response.data);
+  
+      // Ajout dans l'historique local et vider le panier
+      setCommandes((prev) => [...prev, nouvelleCommande]);
       setPanier([]);
+      navigate("/commandes");
+    } catch (error) {
+      console.error("Erreur lors de la commande :", error);
+      alert("La commande n'a pas pu être enregistrée.");
     }
   };
+  
+  
 
-  const total = panier.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const total = panier.reduce((acc, item) => acc + item.prix * item.quantite, 0);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 p-6">
@@ -74,11 +112,11 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
           <div className="space-y-6">
             {panier.map((item, index) => (
               <div key={index} className="flex bg-gray-100 rounded-lg shadow p-4 items-center justify-between">
-                <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg" />
+                <img src={item.image} alt={item.nom} className="w-20 h-20 object-cover rounded-lg" />
                 <div className="flex-1 ml-4">
-                  <h2 className="font-semibold text-lg">{item.name}</h2>
+                  <h2 className="font-semibold text-lg">{item.nom}</h2>
                   <p className="text-sm text-gray-500">{item.description}</p>
-                  <p className="mt-1 font-medium">{item.price} €</p>
+                  <p className="mt-1 font-medium">{item.prix} €</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -87,7 +125,7 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
                   >
                     −
                   </button>
-                  <span>{item.quantity}</span>
+                  <span>{item.quantite}</span>
                   <button
                     onClick={() => augmenterQuantite(index)}
                     className="bg-green-500 text-white w-8 h-8 rounded-full"
@@ -119,36 +157,9 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
         </>
       )}
 
-      <div className="mt-10">
-      <button
-  onClick={() => setShowHistorique(!showHistorique)}
-  className="mt-6 bg-gray-100 hover:bg-gray-200 text-black px-4 py-2 rounded-lg font-semibold shadow"
->
-  {showHistorique ? "Masquer l'historique des commandes" : "Voir l'historique des commandes"}
-</button>
+      
 
-      </div>
-
-      {showHistorique && commandes.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-2xl font-bold mb-4">Commandes passées</h2>
-          <div className="space-y-4">
-            {commandes.map((commande, i) => (
-              <div key={i} className="bg-gray-100 p-4 rounded-lg">
-                <p className="text-gray-600 mb-2">
-                  Le {new Date(commande.date).toLocaleString()}
-                </p>
-                {commande.items.map((item, j) => (
-                  <div key={j} className="flex justify-between text-sm">
-                    <span>{item.quantity}× {item.name}</span>
-                    <span>{item.price * item.quantity} €</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+   
     </div>
   );
 }

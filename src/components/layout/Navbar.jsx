@@ -22,7 +22,7 @@ export default function Navbar({panier}) {
             )}
 
             {(userRole === "client" || userRole === "chef") && (
-              <Link to="/order" className="text-gray-600 hover:text-green-500">
+              <Link to="/commandes" className="text-gray-600 hover:text-green-500">
                 Commandes
               </Link>
             )}
