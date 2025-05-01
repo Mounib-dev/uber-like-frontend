@@ -55,7 +55,7 @@ function App() {
                 <Route path="/restaurant/:id" element={<RestaurantMenu setPanier={setPanier} />} />
                 <Route path="/commandes" element={<OrderList   commandes={commandes}
                           setCommandes={setCommandes} />} />
-                 <Route path="/orders" element={<ChefList   commandes={commandes}
+                 <Route path="/ChefList" element={<ChefList   commandes={commandes}
                           setCommandes={setCommandes} />} />
                 <Route
                       path="/panier"

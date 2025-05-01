@@ -29,7 +29,7 @@ export default function Navbar({panier}) {
            
 {userRole === "chef" && (
               <Link
-                to="/orders"
+                to="/ChefList"
                 className="text-gray-600 hover:text-green-500"
               >
                 Commandes
