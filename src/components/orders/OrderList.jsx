@@ -6,8 +6,22 @@ export default function OrderList({ commandes, setCommandes }) {
   const { userId } = useAuth();
   const [loading, setLoading] = useState(false);
   const [ongletActif, setOngletActif] = useState("enCours");
-
-  useEffect(() => {
+  
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "en attente":
+        return "bg-yellow-100 text-yellow-800";
+      case "en cours de préparation":
+        return "bg-orange-100 text-orange-800";
+      case "en cours de livraison":
+        return "bg-blue-100 text-blue-800";
+      case "livrée":
+        return "bg-green-100 text-green-700";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+ useEffect(() => {
     const fetchCommandes = async () => {
       try {
         const response = await axios.get(
@@ -36,14 +50,13 @@ export default function OrderList({ commandes, setCommandes }) {
         console.error("Erreur lors de la récupération des commandes :", error);
       }
     };
-
-    fetchCommandes();
+fetchCommandes();
   }, [userId]);
 
-  const commandesFiltrees =
-    ongletActif === "enCours"
-      ? commandes.filter((cmd) => cmd.status === "en attente")
-      : commandes.filter((cmd) => cmd.status !== "en attente");
+const commandesFiltrees =
+  ongletActif === "enCours"
+    ? commandes.filter((cmd) => cmd.status !== "livré")
+    : commandes.filter((cmd) => cmd.status === "livré"); 
 
   const annulerDerniereCommande = async () => {
     const commandesEnCours = commandes.filter((cmd) => cmd.status === "en attente");
@@ -146,18 +159,19 @@ export default function OrderList({ commandes, setCommandes }) {
                         </ul>
                       </td>
                       <td className="px-6 py-4 text-right font-semibold text-gray-900">
-                        {total.toFixed(2)} €
+                      {typeof total === "number" ? total.toFixed(2) : "0.00"} €
+
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span
-                          className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                            commande.status === "en attente"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-green-100 text-green-700"
-                          }`}
-                        >
-                          {commande.status}
-                        </span>
+                     <div className="relative inline-flex items-center">
+                     <span className={`relative z-10 px-3 py-1 rounded-full text-xs font-semibold ${getStatusStyle(commande.status)}`}>
+                             {commande.status}
+                     </span>
+                      {commande.status !== "livrée" && (
+                          <span className="absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75 animate-ping"></span>
+                        )}
+                      </div>
+
                       </td>
                       <td className="px-6 py-4 text-center">
                         {isLatest && (

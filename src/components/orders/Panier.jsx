@@ -5,9 +5,17 @@ import {useAuth} from '../../context/AuthContext'
 import { useNavigate } from "react-router-dom";
 
 
-export default function Panier({ panier, setPanier, commandes, setCommandes }) {
+export default function Panier({ panier, setPanier, commandes, setCommandes}) {
   const navigate  = useNavigate()
   const {userId }= useAuth ()
+  const [showPopup, setShowPopup] = useState(false);
+  const [indexASupprimer, setIndexASupprimer] = useState(null);
+
+  const confirmerSuppression = () => {
+    supprimerProduit(indexASupprimer);
+    setIndexASupprimer(null);
+  };
+
   useEffect(() => {
     const savedPanier = localStorage.getItem("panier");
     const savedCommandes = localStorage.getItem("commandes");
@@ -97,12 +105,12 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
       );
   
       if (hasPending) {
-        alert("⚠️ Vous avez déjà une commande en attente !");
+        setShowPopup(true);
+
         return;
       }
   
-      
-      const response = await axios.post(
+ const response = await axios.post(
         `${import.meta.env.VITE_API_GATEWAY}/commande-service/create`,
         {
           clientId: parseInt(userId),
@@ -127,9 +135,7 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
     }
   };
   
-  
-
-  const total = panier.reduce((acc, item) => acc + item.prix * item.quantite, 0);
+   const total = panier.reduce((acc, item) => acc + item.prix * item.quantite, 0);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 p-6">
@@ -163,9 +169,12 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
                     +
                   </button>
                 </div>
-                <button onClick={() => supprimerProduit(index)} className="text-red-600 text-xl ml-4">
-                    🗑️
-              </button>
+                <button
+            onClick={() => setIndexASupprimer(index)}
+            className="text-red-600 text-xl ml-4"
+          >
+            🗑️
+          </button>
 
 
               </div>
@@ -185,11 +194,48 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
             </button>
           </div>
         </>
+        
       )}
-
-      
-
-   
+    {showPopup && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-lg font-bold mb-4">Commande en attente</h2>
+            <p className="mb-4 text-gray-700">
+              ⚠️ Vous avez déjà une commande en attente. Merci de patienter avant de passer une nouvelle commande.
+            </p>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
+      {indexASupprimer !== null && (
+  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="bg-white rounded-2xl shadow-lg p-6 w-80 text-center">
+      <p className="text-lg text-gray-800 mb-4">Confirmer la suppression ?</p>
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={confirmerSuppression}
+          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+        >
+          Supprimer
+        </button>
+        <button
+          onClick={() => setIndexASupprimer(null)}
+          className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300"
+        >
+          Annuler
+        </button>
+      </div>
     </div>
+  </div>
+)}
+
+
+</div>
   );
+  
 }
