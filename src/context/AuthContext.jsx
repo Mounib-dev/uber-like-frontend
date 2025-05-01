@@ -110,7 +110,7 @@ const AuthProvider = ({ children }) => {
         if (userRole === "client") {
           navigate("/restaurants");
         } else if (userRole === "chef") {
-          navigate("/commandes");
+          navigate("/ChefList");
         } else {
           navigate("/livraisons");
         }
