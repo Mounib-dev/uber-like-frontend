@@ -9,6 +9,7 @@ import Footer from "./components/layout/Footer";
 
 
 import OrderList from "./components/orders/OrderList"
+import ChefList from "./components/kitchen/ChefList"
 
 
 import RestaurantList from "./components/restaurants/RestaurantsList";
@@ -53,6 +54,8 @@ function App() {
                 <Route path="/order"  />
                 <Route path="/restaurant/:id" element={<RestaurantMenu setPanier={setPanier} />} />
                 <Route path="/commandes" element={<OrderList   commandes={commandes}
+                          setCommandes={setCommandes} />} />
+                 <Route path="/orders" element={<ChefList   commandes={commandes}
                           setCommandes={setCommandes} />} />
                 <Route
                       path="/panier"
