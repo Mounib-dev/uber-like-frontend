@@ -17,6 +17,7 @@ import Panier from "./components/orders/Panier";
 
 import PrivateRoute from "./components/auth/Private";
 import { AuthProvider } from "./context/AuthContext";
+import Profile from "./components/client/ClientProfile";
 
 function App() {
   const [panier, setPanier] = useState(() => {
@@ -67,6 +68,7 @@ function App() {
                     />
 
                 <Route path="/restaurants" element={<RestaurantList />} />
+                <Route path="/profile" element={<Profile />} />
               </Route>
             </Routes>
           </main>

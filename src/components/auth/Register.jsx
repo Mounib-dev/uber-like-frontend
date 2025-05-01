@@ -45,6 +45,14 @@ export default function Register() {
       if (!response.ok) {
         throw new Error(data.message || "Erreur lors de l'inscription.");
       }
+      localStorage.setItem("user", JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        address,
+        phoneNumber,
+        
+      }));
 
       // setSuccessMessage(data.message)
       setSuccessMessage(data.message);
