@@ -39,6 +39,81 @@ const restaurantData = {
       },
     ],
   },
+  3: {
+    name: "Le cedre",
+    menu: [
+      {
+        id: 5,
+        nom: "Mezzé libanais",
+        description: "Houmous, taboulé, falafel, moutabal",
+        prix: 14,
+        image: "https://images.radio-canada.ca/v1/alimentation/recette/4x3/planche-mezze-libanais-ogleman.jpg",
+      },
+      {
+        id: 6,
+        nom: "Chawarma poulet",
+        description: "Poulet mariné, pain pita, légumes frais",
+        prix: 10,
+        image: "https://recettedebase.com/wp-content/uploads/2016/08/shawarma2.jpg",
+      },
+    ],
+  },
+  4: {
+    name: "Mama Africa",
+    menu: [
+      {
+        id: 7,
+        nom: "Poulet Yassa",
+        description: "Poulet mariné aux oignons et citron, servi avec du riz",
+        prix: 13,
+        image: "https://static.wixstatic.com/media/504b32_85c178d1e3dc4bb4a6032d81e7bfffc5~mv2.jpg/v1/fill/w_528,h_352,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/504b32_85c178d1e3dc4bb4a6032d81e7bfffc5~mv2.jpg",
+      },
+      {
+        id: 8,
+        nom: "Mafé",
+        description: "Ragoût de bœuf à la sauce d'arachide",
+        prix: 14,
+        image: "https://cdn.aistoucuisine.com/assets/c7c393fe-31a7-4d6a-baf0-d16b2817cd60/mafe-kandia-gombo-2.jpg.webp?format=webp&quality=75&width=1536",
+      },
+    ],
+  },
+  5: {
+    name: "sushi express",
+    menu: [
+      {
+        id: 9,
+        nom: "Sushi saumon",
+        description: "Sushi de riz vinaigré avec tranche de saumon cru",
+        prix: 9,
+        image: "https://www.toppits.ch/portal/pics/Rezepte/Sushi/IMG_4-1_Teaser-738x595.jpg"},
+      {
+        id: 10,
+        nom: "California Roll",
+        description: "Crabe, avocat, concombre, riz",
+        prix: 10,
+        image: "https://cdn.chefclub.tools/uploads/recipes/cover-thumbnail/3c15c236-4da9-4dcf-9bd2-7358453f1cd0_kVgNKzC.jpg",
+      },
+    ],
+  },
+  6: {
+    name: "hawaii hawaii",
+    menu: [
+      {
+        id: 11,
+        nom: "Poké bowl saumon",
+        description: "Riz, saumon cru, avocat, edamame, mangue",
+        prix: 12,
+        image: "https://fac.img.pmdstatic.net/fit/~1~fac~2024~06~20~4645ccc4-115b-4f3a-a748-9b06e0c9c359.jpeg/850x478/quality/80/crop-from/center/focus-point/1245%2C788/poke-bowl-saumon-avocat-et-mangue.jpeg",
+      },
+      {
+        id: 12,
+        nom: "Poké bowl crevettes",
+        description: "Crevettes, riz, légumes croquants, sauce sucrée salée",
+        prix: 13,
+        image: "https://images.ricardocuisine.com/services/recipes/1-1581695524.jpg",
+      },
+    ],
+  },
 };
 
 export default function RestaurantMenu({ setPanier }) {
