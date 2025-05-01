@@ -108,8 +108,7 @@ export default function Register() {
               required
             />
           </div>
-
-          <div>
+           <div>
             <label className="mb-1 block text-sm font-semibold text-neutral-700">
               Adresse
             </label>
@@ -122,22 +121,21 @@ export default function Register() {
               required
             />
           </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-semibold text-neutral-700">
-              Numéro de téléphone
-            </label>
-            <input
-              type="text"
-              className="w-full rounded-lg border bg-white p-4"
-              placeholder="ex: 06 00 00 00 00"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="relative">
+        <input
+          type="text"
+          className="w-full rounded-lg border bg-white p-4"
+          placeholder="ex: 06 00 00 00 00"
+          value={phoneNumber}
+          onChange={(e) => {
+            let value = e.target.value.replace(/\D/g, ""); 
+            if (value.length > 10) value = value.slice(0, 10); 
+             const formatted = value.replace(/(\d{2})(?=\d)/g, "$1 ").trim(); 
+            setPhoneNumber(formatted);
+          }}
+          maxLength={14}
+          required
+         />
+    <div className="relative">
             <label className="mb-1 block text-sm font-semibold text-neutral-700">
               Mot de passe
             </label>
@@ -154,7 +152,8 @@ export default function Register() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute top-1/2 right-4 -translate-y-1/2 transform text-gray-400 hover:text-black"
             >
-              {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+              {showPassword ? <Eye size={22} /> : <EyeOff size={22}/>}
+
             </button>
           </div>
 
