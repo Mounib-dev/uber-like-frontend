@@ -11,18 +11,30 @@ export default function Navbar({ panier }) {
 
   return (
     <nav className="flex items-center justify-between bg-white p-4 shadow-md">
-      <div className="text-2xl font-bold text-gray-800">UberEatCopy</div>
-
-      <div className="flex items-center space-x-6 relative">
+      <div className="text-2xl font-bold text-gray-800">UberEatADAMA</div>
+      <div className="flex items-center space-x-6">
         {isLoggedIn && (
           <>
             {userRole === "client" && (
-              <Link to="/restaurants" className="text-gray-600 hover:text-green-500">
+              <>
+              <Link
+                to="/restaurants"
+                className="text-gray-600 hover:text-green-500"
+              >
                 Restaurants
               </Link>
+               <Link to="/commandes" className="text-gray-600 hover:text-green-500">
+               Commandes
+             </Link>
+             </>
             )}
-            {(userRole === "client" || userRole === "chef") && (
-              <Link to="/commandes" className="text-gray-600 hover:text-green-500">
+
+           
+{userRole === "chef" && (
+              <Link
+                to="/ChefList"
+                className="text-gray-600 hover:text-green-500"
+              >
                 Commandes
               </Link>
             )}
