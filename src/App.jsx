@@ -19,15 +19,24 @@ import PrivateRoute from "./components/auth/Private";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
-  const [panier, setPanier] = useState([]);
-const [commandes, setCommandes] = useState([]);
+  const [panier, setPanier] = useState(() => {
+    const stored = localStorage.getItem("panier");
+    try {
+      return stored && stored !== "undefined" ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
-<Panier
-  panier={panier}
-  setPanier={setPanier}
-  commandes={commandes}
-  setCommandes={setCommandes}
-/>
+  const [commandes, setCommandes] = useState(() => {
+    const stored = localStorage.getItem("commandes");
+    try {
+      return stored && stored !== "undefined" ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
  return (
     <Router>
       <div className="flex min-h-screen flex-col">

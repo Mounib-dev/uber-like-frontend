@@ -71,6 +71,37 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
     };
   
     try {
+      
+      const retrieveResponse = await axios.get(
+        `${import.meta.env.VITE_API_GATEWAY}/commande-service/list`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("🧾 Données reçues depuis le backend :", retrieveResponse.data);
+
+      const allCommandes = Array.isArray(retrieveResponse.data)
+      ? retrieveResponse.data
+     : retrieveResponse.data.commandes || [];
+
+  
+      const commandesUtilisateur = allCommandes.filter(
+        (cmd) => cmd.clientId === parseInt(userId)
+      );
+  
+      const hasPending = commandesUtilisateur.some(
+        (cmd) => cmd.status === "en attente"
+      );
+  
+      if (hasPending) {
+        alert("⚠️ Vous avez déjà une commande en attente !");
+        return;
+      }
+  
+      
       const response = await axios.post(
         `${import.meta.env.VITE_API_GATEWAY}/commande-service/create`,
         {
@@ -85,15 +116,14 @@ export default function Panier({ panier, setPanier, commandes, setCommandes }) {
         }
       );
   
-      console.log("Commande enregistrée avec succès :", response.data);
+      console.log("Commande enregistrée :", response.data);
   
-      // Ajout dans l'historique local et vider le panier
       setCommandes((prev) => [...prev, nouvelleCommande]);
       setPanier([]);
       navigate("/commandes");
     } catch (error) {
       console.error("Erreur lors de la commande :", error);
-      alert("La commande n'a pas pu être enregistrée.");
+      alert("❌ La commande n'a pas pu être enregistrée.");
     }
   };
   
