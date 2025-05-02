@@ -62,7 +62,7 @@ export default function Navbar({ panier }) {
             {showMenu && (
               <div className="absolute right-0 mt-3 w-56 rounded-xl border bg-white shadow-xl z-20 overflow-hidden animate-fade-in">
                 <div className="px-5 py-4 bg-green-50 border-b">
-                  <p className="text-xs text-gray-500">Bienvenue 👋</p>
+                  <p className="text-xs text-gray-500">Bienvenue!</p>
                   <p className="mt-1 font-semibold text-gray-800">
                     {user?.firstName} {user?.lastName}
                   </p>
