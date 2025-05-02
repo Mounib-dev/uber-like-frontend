@@ -148,15 +148,16 @@ export default function ChefList() {
       );
 
       if (response.status === 200) {
+        console.log("RESPONSE DATA: ", response.data);
         console.log("???");
-        const clientId = `${commande.clientId}`;
+        const clientId = `${response.data.commande.clientId}`;
         const commandeId = commande.id;
         console.log("Client ID: ", clientId);
         console.log("Commande ID: ", commandeId);
         socket.emit("accept order", { commandeId, clientId });
       }
       const updatedCommandes = commandes.map((cmd) =>
-        cmd.id === commande.id ? { ...cmd, status: "en préparation" } : cmd,
+        cmd.id === commande.id ? { ...cmd, status: newStatus } : cmd,
       );
 
       setCommandes(updatedCommandes);
