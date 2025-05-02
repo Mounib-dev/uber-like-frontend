@@ -57,15 +57,6 @@ export default function Navbar({ panier }) {
               </Link>
             )}
 
-            <Link to="/panier" className="relative text-gray-600 hover:text-green-500">
-              <ShoppingCart size={24} />
-              {panier.length > 0 && (
-                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-xs text-white">
-                  {panier.length}
-                </span>
-              )}
-            </Link>
-
            <div className="relative">
             <User
               size={24}
