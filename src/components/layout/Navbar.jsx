@@ -3,7 +3,7 @@ import { ShoppingCart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { LogOut } from "lucide-react";
 
-export default function Navbar({panier}) {
+export default function Navbar({ panier }) {
   const { isLoggedIn, logout, userRole } = useAuth();
   console.log(userRole);
   return (
@@ -14,20 +14,33 @@ export default function Navbar({panier}) {
           <>
             {userRole === "client" && (
               <>
-              <Link
-                to="/restaurants"
-                className="text-gray-600 hover:text-green-500"
-              >
-                Restaurants
-              </Link>
-               <Link to="/commandes" className="text-gray-600 hover:text-green-500">
-               Commandes
-             </Link>
-             </>
+                <Link
+                  to="/restaurants"
+                  className="text-gray-600 hover:text-green-500"
+                >
+                  Restaurants
+                </Link>
+                <Link
+                  to="/commandes"
+                  className="text-gray-600 hover:text-green-500"
+                >
+                  Commandes
+                </Link>
+                <Link
+                  to="/panier"
+                  className="relative text-gray-600 hover:text-green-500"
+                >
+                  <ShoppingCart size={24} />
+                  {panier.length > 0 && (
+                    <span className="animate-ping-fast absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-xs text-white">
+                      {panier.length}
+                    </span>
+                  )}
+                </Link>
+              </>
             )}
 
-           
-{userRole === "chef" && (
+            {userRole === "chef" && (
               <Link
                 to="/ChefList"
                 className="text-gray-600 hover:text-green-500"
@@ -49,18 +62,6 @@ export default function Navbar({panier}) {
               onClick={logout}
               className="text-gray-600 hover:text-green-500"
             />
-
-          <Link
-          to="/panier"
-          className="relative text-gray-600 hover:text-green-500"
-        >
-          <ShoppingCart size={24} />
-          {panier.length > 0 && (
-            <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-xs text-white animate-ping-fast">
-              {panier.length}
-            </span>
-          )}
-        </Link>
           </>
         )}
 
