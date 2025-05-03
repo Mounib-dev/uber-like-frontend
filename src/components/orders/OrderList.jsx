@@ -15,6 +15,7 @@ export default function OrderList({ commandes, setCommandes }) {
   const [showModal, setShowModal] = useState(false);
   const [commandeASupprimer, setCommandeASupprimer] = useState(null);
   const [toastMessage, setToastMessage] = useState("");
+  const [showThanksPopup, setShowThanksPopup] = useState(false);
 
   useEffect(() => {
     socket.emit("register", userId); // passe le userId du client connecté
@@ -32,25 +33,69 @@ export default function OrderList({ commandes, setCommandes }) {
       toast.info("🍽️ Votre commande est en cours de préparation !");
     });
 
+    socket.on("inform client order is ready", (data) => {
+      console.log("🍽️ Votre commande est prête :", data);
+      const { commandeId } = data;
+
+      setCommandes((prevCommandes) =>
+        prevCommandes.map((cmd) =>
+          cmd.id === commandeId ? { ...cmd, status: "prêt" } : cmd,
+        ),
+      );
+
+      toast.info("🍽️ Votre commande est prête à être livrée !");
+    });
+
+    socket.on("inform client delivery started", (data) => {
+      console.log("🍽️ Votre commande est en cours de livraison :", data);
+      const { commandeId } = data;
+
+      setCommandes((prevCommandes) =>
+        prevCommandes.map((cmd) =>
+          cmd.id === commandeId
+            ? { ...cmd, status: "en cours de livraison" }
+            : cmd,
+        ),
+      );
+
+      toast.info("🛵 Votre commande est en cours de livraison !");
+    });
+
+    socket.on("inform client order delivered", (data) => {
+      console.log("Merci d'avoir commandé !");
+      const { commandeId } = data;
+
+      setCommandes((prevCommandes) =>
+        prevCommandes.map((cmd) =>
+          cmd.id === commandeId ? { ...cmd, status: "livré" } : cmd,
+        ),
+      );
+
+      setShowThanksPopup(true);
+    });
+
     return () => {
       socket.off("inform client about preparation");
+      socket.off("inform client order is ready");
+      socket.off("inform client delivery started");
+      socket.off("inform client order delivered");
     };
   }, [userId, setCommandes]);
 
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case "en attente":
-        return "bg-yellow-100 text-yellow-800";
-      case "en préparation":
-        return "bg-orange-100 text-orange-800";
-      case "en cours de livraison":
-        return "bg-blue-100 text-blue-800";
-      case "livrée":
-        return "bg-green-100 text-green-700";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  // const getStatusStyle = (status) => {
+  //   switch (status) {
+  //     case "en attente":
+  //       return "bg-yellow-100 text-yellow-800";
+  //     case "en préparation":
+  //       return "bg-orange-100 text-orange-800";
+  //     case "en cours de livraison":
+  //       return "bg-blue-100 text-blue-800";
+  //     case "livrée":
+  //       return "bg-green-100 text-green-700";
+  //     default:
+  //       return "bg-gray-100 text-gray-800";
+  //   }
+  // };
 
   useEffect(() => {
     const fetchCommandes = async () => {
@@ -172,7 +217,7 @@ export default function OrderList({ commandes, setCommandes }) {
             <table className="min-w-full divide-y divide-gray-100 overflow-hidden rounded-lg bg-white shadow-sm">
               <thead className="bg-gray-50 text-left text-sm text-gray-600">
                 <tr>
-                  <th className="px-6 py-4 font-medium">Date</th>
+                  {/* <th className="px-6 py-4 font-medium">Date</th> */}
                   <th className="px-6 py-4 font-medium">Articles</th>
                   <th className="px-6 py-4 text-right font-medium">Total</th>
                   <th className="px-6 py-4 text-right font-medium">Status</th>
@@ -192,9 +237,9 @@ export default function OrderList({ commandes, setCommandes }) {
 
                     return (
                       <tr key={commande.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-gray-800">
+                        {/* <td className="px-6 py-4 text-gray-800">
                           {new Date(commande.date).toLocaleString()}
-                        </td>
+                        </td> */}
                         <td className="px-6 py-4 text-gray-700">
                           <ul className="list-inside list-disc space-y-1">
                             {commande.plats?.map((plat, idx) => (
@@ -212,29 +257,38 @@ export default function OrderList({ commandes, setCommandes }) {
                           €
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <div className="relative inline-flex items-center">
-                            <span
-                              className={`relative z-10 rounded-full px-3 py-1 text-xs font-semibold ${getStatusStyle(
-                                commande.status,
-                              )}`}
-                            >
-                              {commande.status}
-                            </span>
-                            {commande.status !== "livrée" && (
-                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75"></span>
-                            )}
-                          </div>
+                          {commande.status !== "livrée" && (
+                            <div className="relative inline-flex items-center space-x-2">
+                              <span className="flex h-3 w-3">
+                                {commande.status !== "livré" && (
+                                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                                )}
+                                <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
+                              </span>
+                              <span>
+                                {commande.status === "prêt"
+                                  ? "Prête"
+                                  : commande.status === "livré"
+                                    ? "Livrée"
+                                    : commande.status}
+                              </span>
+                            </div>
+                          )}
                         </td>
                         <td className="px-6 py-4 text-center">
-                          <button
-                            onClick={() => openModal(commande.id)}
-                            disabled={commandeEnCours === commande.id}
-                            className="text-sm font-medium text-red-600 hover:text-red-800 disabled:opacity-50"
-                          >
-                            {commandeEnCours === commande.id
-                              ? "Annulation..."
-                              : "Annuler"}
-                          </button>
+                          {commande.status !== "livré" ? (
+                            <button
+                              onClick={() => openModal(commande.id)}
+                              disabled={commandeEnCours === commande.id}
+                              className="text-sm font-medium text-red-600 hover:text-red-800 disabled:opacity-50"
+                            >
+                              {commandeEnCours === commande.id
+                                ? "Annulation..."
+                                : "Annuler"}
+                            </button>
+                          ) : (
+                            <span>N/C</span>
+                          )}
                         </td>
                       </tr>
                     );
@@ -269,6 +323,23 @@ export default function OrderList({ commandes, setCommandes }) {
                   Confirmer
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {showThanksPopup && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+            <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
+              <h2 className="mb-4 text-lg font-bold">Merci !</h2>
+              <p className="mb-4 text-gray-700">
+                Merci d'avoir commandé, nous espérons vous revoir bientôt !
+              </p>
+              <button
+                onClick={() => setShowThanksPopup(false)}
+                className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800"
+              >
+                Fermer
+              </button>
             </div>
           </div>
         )}

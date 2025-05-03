@@ -11,6 +11,10 @@ export default function ChefList() {
   const [commandes, setCommandes] = useState([]);
   const [loadingId, setLoadingId] = useState(null);
 
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupHeader, setPopupHeader] = useState("");
+  const [popupContent, setPopupContent] = useState("");
+
   useEffect(() => {
     const fetchCommandes = async () => {
       try {
@@ -23,15 +27,12 @@ export default function ChefList() {
           },
         );
 
-        // console.log(response.data.commandes);
         const allCommandes = Array.isArray(response.data)
           ? response.data
           : response.data.commandes || [];
 
-        // Étape 1 : Extraire les clientId uniques
         const clientIds = [...new Set(allCommandes.map((c) => c.clientId))];
 
-        // Étape 2 : Récupérer les infos clients (supposons une API /clients?ids=id1,id2,id3)
         const clientsResponse = await axios.get(
           `${import.meta.env.VITE_API_GATEWAY}/client-service/clients`,
           {
@@ -42,31 +43,15 @@ export default function ChefList() {
             },
           },
         );
-        // console.log(clientsResponse.data.clients);
-        // console.log(Array.isArray(clientsResponse.data.clients));
+
         const rawClientsData = clientsResponse.data.clients;
-        // let clientsData;
-        // if (Array.isArray(rawClientsData)) {
-        //   clientsData = rawClientsData.length > 1 ? clientsData : [clientsData];
-        // }
-        // console.log(Array.isArray(rawClientsData));
+
         const clientsData = Array.isArray(rawClientsData)
           ? rawClientsData
           : [rawClientsData];
-        // console.log(clientsData);
-        // console.log(
-        //   "Commandes clientIds:",
-        //   allCommandes.map((c) => c.clientId),
-        // );
-        // console.log(
-        //   "Clients ids:",
-        //   clientsData.map((c) => c.id),
-        // );
 
-        // Étape 3 : Associer les infos clients à chaque commande
         const commandesWithClients = allCommandes.map((cmd) => {
           const client = clientsData.find((c) => c.id === cmd.clientId);
-          // console.log(client);
           return {
             ...cmd,
             clientInfo: client || null,
@@ -99,23 +84,15 @@ export default function ChefList() {
       );
       return clientsResponse.data.clients;
     };
+
     socket.on("inform restaurant", async (data) => {
       console.log("🍽️ Nouvelle commande :", data);
       const { commandeId, clientId, plats } = data;
-      console.log(plats);
       const client = await fetchClient(clientId);
-      console.log(client[0]);
-      // setCommandes((prevCommandes) =>
-      //   prevCommandes.map((cmd) =>
-      //     cmd.id === commandeId
-      //       ? { ...cmd, status: "en attente", clientInfo: client[0] }
-      //       : cmd,
-      //   ),
-      // );
       setCommandes((prevCommandes) => [
         ...prevCommandes,
         {
-          id: commandeId, // <-- ta nouvelle commande ici
+          id: commandeId,
           plats: plats,
           status: "en attente",
           clientInfo: client[0],
@@ -125,8 +102,41 @@ export default function ChefList() {
       toast.info("🍽️ Nouvelle commande à préparer !");
     });
 
+    socket.on("inform restaurant delivery started", (data) => {
+      const { commandeId } = data;
+      console.log(
+        `🛵 La commande ${commandeId} est en cours de livraison !`,
+        data,
+      );
+
+      setCommandes((prevCommandes) =>
+        prevCommandes.map((cmd) =>
+          cmd.id === commandeId
+            ? { ...cmd, status: "en cours de livraison" }
+            : cmd,
+        ),
+      );
+
+      toast.info(`🛵 La commande ${commandeId} est en cours de livraison !`);
+    });
+
+    socket.on("inform restaurant order delivered", (data) => {
+      const { commandeId } = data;
+      console.log(`🛵 La commande ${commandeId} a été livrée !`, data);
+
+      setCommandes((prevCommandes) =>
+        prevCommandes.map((cmd) =>
+          cmd.id === commandeId ? { ...cmd, status: "livré" } : cmd,
+        ),
+      );
+
+      toast.info(`🛵 La commande ${commandeId} a été livrée !`);
+    });
+
     return () => {
       socket.off("inform restaurant");
+      socket.off("inform restaurant delivery started");
+      socket.off("inform restaurant order delivered");
     };
   }, [userId]);
 
@@ -148,20 +158,32 @@ export default function ChefList() {
       );
 
       if (response.status === 200) {
-        console.log("RESPONSE DATA: ", response.data);
-        console.log("???");
         const clientId = `${response.data.commande.clientId}`;
         const commandeId = commande.id;
+        const plats = response.data.commande.plats;
         console.log("Client ID: ", clientId);
         console.log("Commande ID: ", commandeId);
-        socket.emit("accept order", { commandeId, clientId });
+        console.log("NEW STATUS: ", newStatus);
+        if (newStatus === "en préparation") {
+          socket.emit("accept order", { commandeId, clientId, plats });
+        } else if (newStatus === "prêt") {
+          socket.emit("order is ready", { commandeId, clientId });
+        }
       }
       const updatedCommandes = commandes.map((cmd) =>
         cmd.id === commande.id ? { ...cmd, status: newStatus } : cmd,
       );
 
       setCommandes(updatedCommandes);
-      alert("Commande acceptée, le client a été informé.");
+      // alert("Commande acceptée, le client a été informé.");
+      if (newStatus === "en préparation") {
+        setPopupHeader("Commande acceptée");
+        setPopupContent("Commande acceptée, client informé.");
+      } else if (newStatus === "prêt") {
+        setPopupHeader("Commande prête");
+        setPopupContent("Commande prête, client informé.");
+      }
+      setShowPopup(true);
     } catch (error) {
       console.error("Erreur lors de l'acceptation :", error);
       alert("Impossible de changer le statut.");
@@ -170,9 +192,9 @@ export default function ChefList() {
     }
   };
 
-  const commandesEnAttente = commandes.filter(
-    (commande) => commande.status === "en attente",
-  );
+  // const commandesEnAttente = commandes.filter(
+  //   (commande) => commande.status === "en attente",
+  // );
 
   return (
     <>
@@ -202,9 +224,9 @@ export default function ChefList() {
                   <th className="px-6 py-3 text-center text-sm font-medium text-gray-700">
                     Action
                   </th>
-                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  {/* <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
                     Date
-                  </th>
+                  </th> */}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -227,9 +249,13 @@ export default function ChefList() {
                           {commande.clientInfo?.firstName}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900">
-                          {commande.status === "prêt"
-                            ? "Prête"
-                            : `${commande.status}`}
+                          <span>
+                            {commande.status === "prêt"
+                              ? "Prête"
+                              : commande.status === "livré"
+                                ? "Livrée"
+                                : commande.status}
+                          </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-700">
                           <ul className="list-inside list-disc space-y-1">
@@ -272,9 +298,9 @@ export default function ChefList() {
                           {(commande.status === "en cours de livraison" ||
                             commande.status === "livré") && <span>N/C</span>}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
+                        {/* <td className="px-6 py-4 text-sm text-gray-900">
                           {new Date(commande.date).toLocaleString()}
-                        </td>
+                        </td> */}
                       </tr>
                     );
                   })}
@@ -283,6 +309,20 @@ export default function ChefList() {
           </div>
         )}
       </div>
+      {showPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
+            <h2 className="mb-4 text-lg font-bold">{popupHeader}</h2>
+            <p className="mb-4 text-gray-700">{popupContent}</p>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="rounded bg-black px-4 py-2 text-white hover:bg-gray-800"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
       <ToastContainer position="bottom-right" autoClose={3000} />
     </>
   );
