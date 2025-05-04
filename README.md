@@ -31,4 +31,4 @@ Les adresses mail doivent être différentes
 
 Lorsque vous entrerez un numéro de téléphone, commencez obligatoire par "0" sinon le formulaire restera bloqué
 
-Une fois les 3 inscriptions terminés, vos 3 utilisautes auront le rôle "client", il faudra alors manuellement sur votre base de données modifier le rôle de deux d'entre eux en mettant respectivement les valeurs à "chef" et "livreur", ça doit être exactement ces valeurs sinon l'application ne fonctionnera pas correctement.
+Une fois les 3 inscriptions terminés, vos 3 utilisateurs auront le rôle "client", il faudra alors manuellement sur votre base de données modifier le rôle de deux d'entre eux en mettant respectivement les valeurs à "chef" et "livreur", ça doit être exactement ces valeurs sinon l'application ne fonctionnera pas correctement.
